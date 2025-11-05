@@ -1,65 +1,50 @@
 from flask import Flask, jsonify, request
 from supabase import create_client, Client
 import os
-import sqlite3
 from flask_cors import CORS
 from dotenv import load_dotenv
-import mimetypes
-from urllib.parse import urlparse, unquote
+
+from Models.music import Music
+from Controllers.MusicController import MusicRepository
+from Services.supabase import StorageService
 
 app = Flask(__name__)
 CORS(app)
-
-def conectaBD():
-    conexao = sqlite3.connect("./backend/Streaming.db")
-    return conexao
-
 load_dotenv()  # isso carrega o .env
 
+# --- Configuração e Instanciação ---
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 BUCKET_NAME = os.getenv("BUCKET_NAME")
+DB_PATH = "./Streaming.db"
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+storage_service = StorageService(supabase, BUCKET_NAME)
+music_repository = MusicRepository(DB_PATH)
 
+# --- Rotas ---
 @app.route("/upload", methods=["POST"])
 def upload_file():
-    conexao = conectaBD()
-    cursor = conexao.cursor()
-
-    file = request.files["file"]
-    name = request.form.get("name")
-
     if "file" not in request.files:
         return jsonify({"error": "Nenhum arquivo enviado"}), 400
 
+    file = request.files["file"]
     if file.filename == "":
         return jsonify({"error": "Nome de arquivo inválido"}), 400
 
-    file_bytes = file.read()
-    content_type, _ = mimetypes.guess_type(file.filename)
-    if not content_type:
-        content_type = "application/octet-stream"
+    name = request.form.get("name", file.filename) # Usa o nome do form ou o nome do arquivo
 
     try:
-        # Envia com o tipo MIME correto
-        supabase.storage.from_(BUCKET_NAME).upload(
-            path=file.filename,
-            file=file_bytes,
-            file_options={"content-type": content_type},
-        )
+        public_url, content_type = storage_service.upload(file)
 
-        public_url = supabase.storage.from_(BUCKET_NAME).get_public_url(file.filename)
+        new_music = Music(name=name, url=public_url)
+        created_music = music_repository.create(new_music)
 
-        cursor.execute("""
-                       INSERT INTO music (name, url) VALUES (?, ?)
-                """, (
-                    name,
-                    public_url,
-                ))
-        conexao.commit()
-
-        return jsonify({"message": "Upload bem-sucedido!", "public_url": public_url, "content_type": content_type})
+        return jsonify({
+            "message": "Upload bem-sucedido!",
+            "music": created_music.to_dict(),
+            "content_type": content_type
+        }), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -67,131 +52,66 @@ def upload_file():
 # Adicionar música
 @app.route('/music', methods=['POST'])
 def add_music():
-    conexao = conectaBD()
-    cursor = conexao.cursor()
-    music = request.get_json()
-
+    music_data = request.get_json()
     try:
-        cursor.execute("""
-            INSERT INTO music (id, name, artist, date, duration)
-            VALUES (?, ?, ?, ?, ?)
-        """, (
-            music.get('id'),
-            music.get('name'),
-            music.get('artist'),
-            music.get('date'),
-            music.get('duration')
-        )) 
-        conexao.commit()
-        print("Música inserida com sucesso!")
-        return jsonify(music)
-    except sqlite3.Error as e:
-        print(f"Erro ao inserir Música: {e}")
-    finally:
-        conexao.close()
+        # Assumindo que a URL já existe se a música for adicionada por aqui
+        new_music = Music(**music_data)
+        created_music = music_repository.create(new_music)
+        return jsonify(created_music.to_dict()), 201
+    except Exception as e:
+        return jsonify({"error": f"Erro ao inserir Música: {e}"}), 500
 
 # Consultar músicas
 @app.route('/music', methods=['GET'])
 def get_music():
-    conexao = conectaBD()
-    conexao.row_factory = sqlite3.Row
-    cursor = conexao.cursor()
     try:
-        cursor.execute("SELECT * FROM music")
-        rows = cursor.fetchall()
-        musics = [dict(row) for row in rows] 
-        conexao.commit()
-        print("Consulta realizada com sucesso!")
+        musics = music_repository.get_all()
         return jsonify(musics)
-    except sqlite3.Error as e:
-        print(f"Erro ao consultar as músicas: {e}")
-    finally:
-        conexao.close()
+    except Exception as e:
+        return jsonify({"error": f"Erro ao consultar as músicas: {e}"}), 500
 
 # Consultar música por id
 @app.route('/music/<int:id>', methods=['GET'])
 def get_music_id(id):
-    conexao = conectaBD()
-    conexao.row_factory = sqlite3.Row
-    cursor = conexao.cursor()
-
     try:
-        cursor.execute("SELECT * FROM music WHERE id = ?", (id,))
-        music = cursor.fetchone()
-
+        music = music_repository.get_by_id(id)
         if music is None:
             return jsonify({"error": "Música não encontrada"}), 404
-
-        return jsonify(dict(music))
-    except sqlite3.Error as e:
-        print(f"Erro ao consultar a música: {e}")
+        return jsonify(music.to_dict())
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
-    finally:
-        conexao.close()
 
 # Deletar música
 @app.route('/music/<int:id>', methods=['DELETE'])
 def delete_music(id):
-    conexao = conectaBD()
-    cursor = conexao.cursor()
     try:
-        cursor.execute("SELECT url FROM music WHERE id = ?", (id,))
-        result_row = cursor.fetchone()
-        if not result_row:
+        music_to_delete = music_repository.get_by_id(id)
+        if not music_to_delete:
             return jsonify({"error": f"Música com id {id} não encontrada."}), 404
 
-        url = result_row[0]
-        parsed = urlparse(url)
-        path_parts = parsed.path.split("/")
+        # 1. Remove do storage
+        storage_service.remove(music_to_delete.url)
 
-        try:
-            object_index = path_parts.index("object")
-        except ValueError:
-            return jsonify({"error": "URL do Supabase mal formatada, 'object' não encontrado."}), 500
-
-        if len(path_parts) <= object_index + 3:
-            return jsonify({"error": f"URL inválida ou sem caminho de arquivo: {url}"}), 500
-
-        bucket_name = path_parts[object_index + 2]          # Bucket = 'Music'
-        file_path_segments = path_parts[object_index + 3:]  # Caminho dentro do bucket
-        file_path = unquote("/".join(file_path_segments))   # Decodifica
-
-        print("Bucket:", bucket_name)
-        print("Caminho do arquivo:", file_path)
-
-        result = supabase.storage.from_(bucket_name).remove([file_path])
-        print("Resultado da remoção:", result)
-
-        # 4. Deletar a entrada da música do banco de dados SQLite
-        cursor.execute("""
-            DELETE FROM music WHERE id = ?
-        """, (
-            id,
-        ))
-        conexao.commit()
-        print("Música deletada do banco de dados com sucesso!")
+        # 2. Remove do banco de dados
+        music_repository.delete(id)
+        
         return jsonify({"message": f"Música com id {id} deletada."}), 200
-    except Exception as e: # Captura erros gerais, incluindo problemas com Supabase ou parsing da URL
-        print(f"Erro ao deletar Música: {e}")
+    except Exception as e:
         return jsonify({"error": f"Erro ao deletar música: {str(e)}"}), 500
-    finally:
-        conexao.close()
 
 # Editar música
 @app.route('/music/<int:id>', methods=['PUT'])
 def edit_music(id):
-    conexao = conectaBD()
-    cursor = conexao.cursor()
-    music = request.get_json()
-
+    music_data = request.get_json()
     try:
-        cursor.execute("""
-            ALTER TABLE music FROM ? WHERE id = ?
-        """, (
-            music.get('id'),
-        ))
-    except:
-        return
+        # Verifica se a música existe antes de tentar atualizar
+        if not music_repository.get_by_id(id):
+            return jsonify({"error": "Música não encontrada"}), 404
+            
+        updated_music = music_repository.update(id, music_data)
+        return jsonify(updated_music.to_dict())
+    except Exception as e:
+        return jsonify({"error": f"Erro ao editar música: {str(e)}"}), 500
 
-
-app.run(port=5000, host='localhost', debug=True)
+if __name__ == '__main__':
+    app.run(port=5000, host='localhost', debug=True)
