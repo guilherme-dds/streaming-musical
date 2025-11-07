@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from Models.music import Music
 from Controllers.MusicController import MusicRepository
 from Services.supabase import StorageService
+from Models.artist import Artist
+from Controllers.ArtistController import ArtistRepository
 
 app = Flask(__name__)
 CORS(app)
@@ -16,11 +18,13 @@ load_dotenv()  # isso carrega o .env
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 BUCKET_NAME = os.getenv("BUCKET_NAME")
-DB_PATH = "./Streaming.db"
+
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Streaming.db")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 storage_service = StorageService(supabase, BUCKET_NAME)
 music_repository = MusicRepository(DB_PATH)
+artist_repository = ArtistRepository(DB_PATH)
 
 # --- Rotas ---
 @app.route("/upload", methods=["POST"])
@@ -60,6 +64,17 @@ def add_music():
         return jsonify(created_music.to_dict()), 201
     except Exception as e:
         return jsonify({"error": f"Erro ao inserir Música: {e}"}), 500
+    
+# Adicionar artista
+@app.route('/artist', methods=['POST'])
+def add_artist():
+    artist_data = request.get_json()
+    try:
+       new_artist = Artist(**artist_data) 
+       created_artist = artist_repository.create(new_artist)
+       return jsonify(created_artist.to_dict()), 201
+    except Exception as e:
+        return jsonify({"error": f"Erro ao inserir Artista: {e}"}), 500
 
 # Consultar músicas
 @app.route('/music', methods=['GET'])

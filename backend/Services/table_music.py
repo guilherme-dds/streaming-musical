@@ -1,18 +1,24 @@
 import sqlite3
+import os
 
-conexao = sqlite3.connect("./backend/Streaming.db")
+db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Streaming.db")
+conexao = sqlite3.connect(db_path)
 
 cursor = conexao.cursor()
 
 cursor.execute("""
         CREATE TABLE music (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_album INTENGER,
+            id_artist INTEGER,
+            id_genero INTEGER,
             name TEXT,
-            artist TEXT,
-            date DATE,
             duration TIME,
-            url TEXT NOT NULL
-);
+            url TEXT NOT NULL,
+            FOREIGN KEY (id_album) REFERENCES album(id),
+            FOREIGN KEY (id_artist) REFERENCES artist(id),
+            FOREIGN KEY (id_genero) REFERENCES genero(id)
+    );
 """)
 
 cursor.close()

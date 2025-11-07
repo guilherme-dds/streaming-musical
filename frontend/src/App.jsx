@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
+import Player from "./Player"; // Importa o novo componente
+import "./Player.css"; // Importa o CSS do player
 
 const App = () => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [publicUrl, setPublicUrl] = useState("");
   const [musics, setMusics] = useState([]);
-  const [currentMusicUrl, setCurrentMusicUrl] = useState("");
+  const [currentMusic, setCurrentMusic] = useState(null); // Estado para a música atual
 
   const inputName = useRef();
   const inputArtist = useRef();
@@ -38,7 +39,6 @@ const App = () => {
 
       const result = await response.json();
       if (response.ok) {
-        setPublicUrl(result.public_url);
         alert("Upload feito com sucesso!");
       } else {
         alert("Erro: " + result.error);
@@ -78,7 +78,7 @@ const App = () => {
 
       if (response.ok) {
         const music = await response.json();
-        setCurrentMusicUrl(music.url); // Define a URL da música atual
+        setCurrentMusic(music); // Define o objeto da música atual
         console.log("Tocando música:", music);
       } else {
         const errorResult = await response.json();
@@ -102,6 +102,7 @@ const App = () => {
         alignItems: "center",
         justifyContent: "center",
         width: "100vw",
+        paddingBottom: "100px", // Adiciona espaço para não sobrepor o player
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -155,16 +156,7 @@ const App = () => {
         </ul>
       </div>
 
-      <audio src={currentMusicUrl} controls autoPlay></audio>
-
-      {publicUrl && (
-        <div style={{ marginTop: "1rem" }}>
-          <p>Arquivo disponível em:</p>
-          <a href={publicUrl} target="_blank" rel="noopener noreferrer">
-            {publicUrl}
-          </a>
-        </div>
-      )}
+      <Player currentMusic={currentMusic} />
     </div>
   );
 };
