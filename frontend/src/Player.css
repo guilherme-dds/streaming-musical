@@ -55,7 +55,7 @@
 .control-button {
   background-color: transparent;
   border: none;
-  color: #b3b3b3;
+  color: #fff;
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -63,13 +63,18 @@
   justify-content: center;
 }
 
+.control-button:focus {
+  outline: none;
+}
+
 .control-button:hover {
   color: #fff;
+  transition: all 0.3s ease;
 }
 
 .play-button {
-  background-color: #fff;
-  color: #000;
+  background-color: #08a1e7;
+  color: #fff;
   border-radius: 50%;
   width: 32px;
   height: 32px;

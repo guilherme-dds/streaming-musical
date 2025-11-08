@@ -36,9 +36,9 @@ class MusicRepository:
         try:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO music (name, artist, date, duration, url)
-                VALUES (?, ?, ?, ?, ?)
-            """, (music.name, music.artist, music.date, music.duration, music.url))
+                INSERT INTO music (name, duration, url)
+                VALUES (?, ?, ?)
+            """, (music.name, music.duration, music.url))
             conn.commit()
             music.id = cursor.lastrowid
             return music

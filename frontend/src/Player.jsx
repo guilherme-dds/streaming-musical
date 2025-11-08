@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "./Player.css";
-import { PlayIcon, PauseIcon, NextIcon, PrevIcon } from "./assets/PlayerIcons";
+import { StepBack, StepForward, Play, Pause } from "lucide-react";
 
 const Player = ({ currentMusic }) => {
   const audioRef = useRef(null);
@@ -93,16 +93,16 @@ const Player = ({ currentMusic }) => {
       <div className="player-controls">
         <div className="main-controls">
           <button className="control-button">
-            <PrevIcon />
+            <StepBack size={22} />
           </button>
           <button
             className="control-button play-button"
             onClick={togglePlayPause}
           >
-            {isPlaying ? <PauseIcon /> : <PlayIcon />}
+            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
           </button>
           <button className="control-button">
-            <NextIcon />
+            <StepForward size={22} />
           </button>
         </div>
         <div className="progress-bar-container">
