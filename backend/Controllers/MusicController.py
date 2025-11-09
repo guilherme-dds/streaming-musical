@@ -9,6 +9,7 @@ class MusicRepository:
         # O row_factory permite acessar colunas por nome
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON")
         return conn
 
     def get_all(self):
@@ -50,9 +51,9 @@ class MusicRepository:
         try:
             cursor = conn.cursor()
             cursor.execute("""
-                UPDATE music SET name = ?, artist = ?, date = ?, duration = ?
+                UPDATE music SET name = ?, duration = ?
                 WHERE id = ?
-            """, (music_data['name'], music_data['artist'], music_data['date'], music_data['duration'], music_id))
+            """, (music_data['name'], music_data['duration'], music_id))
             conn.commit()
             return self.get_by_id(music_id)
         finally:

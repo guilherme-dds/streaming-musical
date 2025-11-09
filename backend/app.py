@@ -4,11 +4,13 @@ import os
 from flask_cors import CORS
 from dotenv import load_dotenv
 
+from Services.supabase import StorageService
 from Models.music import Music
 from Controllers.MusicController import MusicRepository
-from Services.supabase import StorageService
 from Models.artist import Artist
 from Controllers.ArtistController import ArtistRepository
+from Models.album import Album
+from Controllers.AlbumController import AlbumRepository
 
 app = Flask(__name__)
 CORS(app)
@@ -25,8 +27,9 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 storage_service = StorageService(supabase, BUCKET_NAME)
 music_repository = MusicRepository(DB_PATH)
 artist_repository = ArtistRepository(DB_PATH)
+album_repository = AlbumRepository(DB_PATH)
 
-# --- Rotas ---
+# --- Rotas Musica ---
 @app.route("/upload", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
@@ -64,17 +67,6 @@ def add_music():
         return jsonify(created_music.to_dict()), 201
     except Exception as e:
         return jsonify({"error": f"Erro ao inserir Música: {e}"}), 500
-    
-# Adicionar artista
-@app.route('/artist', methods=['POST'])
-def add_artist():
-    artist_data = request.get_json()
-    try:
-       new_artist = Artist(**artist_data) 
-       created_artist = artist_repository.create(new_artist)
-       return jsonify(created_artist.to_dict()), 201
-    except Exception as e:
-        return jsonify({"error": f"Erro ao inserir Artista: {e}"}), 500
 
 # Consultar músicas
 @app.route('/music', methods=['GET'])
@@ -127,6 +119,94 @@ def edit_music(id):
         return jsonify(updated_music.to_dict())
     except Exception as e:
         return jsonify({"error": f"Erro ao editar música: {str(e)}"}), 500
+    
+# --- Rotas Artista ---
+    
+# Adicionar artista
+@app.route('/artist', methods=['POST'])
+def add_artist():
+    artist_data = request.get_json()
+    try:
+       new_artist = Artist(**artist_data) 
+       created_artist = artist_repository.create(new_artist)
+       return jsonify(created_artist.to_dict()), 201
+    except Exception as e:
+        return jsonify({"error": f"Erro ao inserir Artista: {e}"}), 500
+    
+# Consultar artistas
+@app.route('/artist', methods=['GET'])
+def get_artist():
+    try:
+        artist = artist_repository.get_all()
+        return jsonify(artist)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao consultar os artistas: {e}"}), 500
+    
+# Deletar artista
+@app.route('/artist/<int:id>', methods=['DELETE'])
+def delete_artist(id):
+    try:
+        artist_to_delete = artist_repository.get_by_id(id)
+        if not artist_to_delete:
+            return jsonify({"error": f"Artista com id {id} não encontrado."}), 404
+        artist_repository.delete(id)
+        
+        return jsonify({"message": f"Artista com id {id} deletado."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Erro ao deletar artista: {str(e)}"}), 500
+
+# Editar artista
+@app.route('/artist/<int:id>', methods=['PUT'])
+def edit_artist(id):
+    artist_data = request.get_json()
+    try:
+        if not artist_repository.get_by_id(id):
+            return jsonify({"error": "Artista não encontrado"}), 404
+            
+        updated_artist = artist_repository.update(id, artist_data)
+        return jsonify(updated_artist.to_dict())
+    except Exception as e:
+        return jsonify({"error": f"Erro ao editar artista: {str(e)}"}), 500
+    
+# --- Rotas Album ---
+    
+# Adicionar album
+@app.route('/album', methods=['POST'])
+def add_album():
+    album_data = request.get_json()
+    try:
+       # Verifica se o artista associado ao álbum existe
+       artist_id = album_data.get('id_artist')
+       if not artist_id or not artist_repository.get_by_id(artist_id):
+           return jsonify({"error": "Artista não encontrado"}), 404
+
+       new_album = Album(**album_data) 
+       created_album = album_repository.create(new_album)
+       return jsonify(created_album.to_dict()), 201
+    except Exception as e:
+        return jsonify({"error": f"Erro ao inserir Album: {e}"}), 500
+
+# Consultar album
+@app.route('/album', methods=['GET'])
+def get_album():
+    try:
+        album = album_repository.get_all()
+        return jsonify(album)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao consultar os albuns: {e}"}), 500
+    
+# Deletar album
+@app.route('/album/<int:id>', methods=['DELETE'])
+def delete_album(id):
+    try:
+        album_to_delete = album_repository.get_by_id(id)
+        if not album_to_delete:
+            return jsonify({"error": f"Album com id {id} não encontrado."}), 404
+        album_repository.delete(id)
+        
+        return jsonify({"message": f"Album com id {id} deletado."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Erro ao deletar album: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(port=5000, host='localhost', debug=True)

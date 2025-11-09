@@ -12,7 +12,7 @@ cursor.execute("""
         name TEXT,
         id_artist INTEGER,
         date DATE,
-        FOREIGN KEY (id_artist) REFERENCES artist(id)
+        FOREIGN KEY (id_artist) REFERENCES artist(id) ON DELETE CASCADE
     );
 """)
 

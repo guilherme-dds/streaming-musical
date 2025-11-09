@@ -10,8 +10,8 @@ cursor.execute("""
     CREATE TABLE playlist_music (
         id_playlist INTEGER,
         id_music INTEGER,
-        FOREIGN KEY (id_playlist) REFERENCES playlist(id),
-        FOREIGN KEY (id_music) REFERENCES music(id)
+        FOREIGN KEY (id_playlist) REFERENCES playlist(id) ON DELETE CASCADE,
+        FOREIGN KEY (id_music) REFERENCES music(id) ON DELETE CASCADE
     );
 """)
 

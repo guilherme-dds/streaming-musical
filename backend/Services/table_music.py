@@ -15,9 +15,9 @@ cursor.execute("""
             name TEXT,
             duration TIME,
             url TEXT NOT NULL,
-            FOREIGN KEY (id_album) REFERENCES album(id),
-            FOREIGN KEY (id_artist) REFERENCES artist(id),
-            FOREIGN KEY (id_genero) REFERENCES genero(id)
+            FOREIGN KEY (id_album) REFERENCES album(id) ON DELETE CASCADE, 
+            FOREIGN KEY (id_artist) REFERENCES artist(id) ON DELETE CASCADE,
+            FOREIGN KEY (id_genero) REFERENCES genero(id) ON DELETE CASCADE
     );
 """)
 

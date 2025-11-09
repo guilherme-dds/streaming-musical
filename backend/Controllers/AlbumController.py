@@ -1,7 +1,7 @@
 import sqlite3
-from Models.artist import Artist
+from Models.album import Album
 
-class ArtistRepository:
+class AlbumRepository:
     def __init__(self, db_path):
         self.db_path = db_path
 
@@ -15,54 +15,54 @@ class ArtistRepository:
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM artist")
+            cursor.execute("SELECT * FROM album")
             rows = cursor.fetchall()
-            return [Artist(**row).to_dict() for row in rows]
+            return [Album(**row).to_dict() for row in rows]
         finally:
             conn.close()
 
-    def get_by_id(self, artist_id):
+    def get_by_id(self, album_id):
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM artist WHERE id = ?", (artist_id,))
+            cursor.execute("SELECT * FROM album WHERE id = ?", (album_id,))
             row = cursor.fetchone()
-            return Artist(**row) if row else None
+            return Album(**row) if row else None
         finally:
             conn.close()    
 
-    def create(self, artist):
+    def create(self, album):
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO artist (name, image)
-                VALUES (?, ?)
-            """, (artist.name, artist.image))
+                INSERT INTO album (name, id_artist, date)
+                VALUES (?, ?, ?)
+            """, (album.name, album.id_artist, album.date))
             conn.commit()
-            artist.id = cursor.lastrowid
-            return artist
+            album.id = cursor.lastrowid
+            return album
         finally:
             conn.close()
 
-    def update(self, artist_id, artist_data):
+    def update(self, album_id, album_data):
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
             cursor.execute("""
-                UPDATE artist SET name = ?, image = ?
+                UPDATE album SET name = ?, id_artist = ?, date = ?
                 WHERE id = ?
-            """, (artist_data['name'], artist_data['image'], artist_id))
+            """, (album_data['name'], album_data['id_artist'], album_data['date'], album_id))
             conn.commit()
-            return self.get_by_id(artist_id)
+            return self.get_by_id(album_id)
         finally:
             conn.close()
 
-    def delete(self, artist_id):
+    def delete(self, album_id):
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM artist WHERE id = ?", (artist_id,))
+            cursor.execute("DELETE FROM album WHERE id = ?", (album_id,))
             conn.commit()
         finally:
             conn.close()

@@ -11,7 +11,7 @@ cursor.execute("""
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         id_user INTEGER,
         name TEXT,
-        FOREIGN KEY (id_user) REFERENCES user(id)
+        FOREIGN KEY (id_user) REFERENCES user(id) ON DELETE CASCADE
     );
 """)
 
