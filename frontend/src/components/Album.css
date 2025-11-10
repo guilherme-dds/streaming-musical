@@ -1,0 +1,38 @@
+.album-item {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 166px; /* Largura igual ao artist-item */
+  height: 236px; /* Altura igual ao artist-item */
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #fff;
+  border-radius: 20px;
+  padding: 30px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.album-icon {
+  color: #fff;
+}
+
+.add-album-item {
+  cursor: pointer;
+  border-style: dashed;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.add-album-item:hover {
+  background-color: #2a2e2f;
+  border-color: #08a1e7;
+}
+
+/* Reutilizando o estilo do select do formulário de artista */
+.add-artist-form select {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #2a2e2f; /* Garante fundo branco */
+}
