@@ -3,6 +3,7 @@
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+  align-items: center; /* Garante que o título e os botões estejam alinhados verticalmente */
 }
 
 .content {
@@ -12,15 +13,44 @@
   gap: 20px;
 }
 
+.artist-list {
+  display: flex;
+  flex-direction: row;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.name {
+  text-align: center;
+}
+
 .artist-item {
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 100px;
+  position: relative;
   align-items: center;
   border: 3px solid #fff;
   border-radius: 20px;
   padding: 30px 30px 70px;
+}
+
+.add-artist-item {
+  justify-content: center;
+  cursor: pointer;
+  border-style: dashed;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.add-artist-item:hover {
+  background-color: #2a2e2f;
+  border-color: #08a1e7;
+}
+
+.plus-icon {
+  font-size: 60px;
+  color: #fff;
 }
 
 .img {
@@ -28,4 +58,96 @@
   width: 100px;
   background-color: #fff;
   border-radius: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.header button {
+  background: transparent;
+  border: 2px solid #08a1e7;
+  color: white;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.add-artist-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 15px;
+  max-width: 400px;
+  background-color: #1d2123;
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid #282828;
+}
+
+.add-artist-form input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form-buttons button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.artist-item-actions {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-button {
+  background-color: rgba(42, 46, 47, 0.8);
+  border: 1px solid #444;
+  color: #ccc;
+  border-radius: 100%;
+  font-size: 12px;
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: #08a1e7;
+  color: #fff;
+  border-color: #08a1e7;
 }
