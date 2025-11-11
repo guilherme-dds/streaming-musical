@@ -6,7 +6,6 @@ class MusicRepository:
         self.db_path = db_path
 
     def _get_connection(self):
-        # O row_factory permite acessar colunas por nome
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
@@ -16,9 +15,15 @@ class MusicRepository:
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM music")
+            cursor.execute("""
+                SELECT 
+                    m.*, 
+                    a.name as artist_name 
+                FROM music m
+                LEFT JOIN artist a ON m.id_artist = a.id
+            """)
             rows = cursor.fetchall()
-            return [Music(**row).to_dict() for row in rows]
+            return [dict(row) for row in rows]
         finally:
             conn.close()
 
@@ -26,9 +31,16 @@ class MusicRepository:
         conn = self._get_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM music WHERE id = ?", (music_id,))
+            cursor.execute("""
+                SELECT 
+                    m.*, 
+                    a.name as artist_name 
+                FROM music m
+                LEFT JOIN artist a ON m.id_artist = a.id
+                WHERE m.id = ?
+            """, (music_id,))
             row = cursor.fetchone()
-            return Music(**row) if row else None
+            return dict(row) if row else None
         finally:
             conn.close()
 
@@ -37,9 +49,9 @@ class MusicRepository:
         try:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO music (name, duration, url)
-                VALUES (?, ?, ?)
-            """, (music.name, music.duration, music.url))
+                INSERT INTO music (name, url, id_artist, id_album, id_genero)
+                VALUES (?, ?, ?, ?, ?)
+            """, (music.name, music.url, music.id_artist, music.id_album, music.id_genero))
             conn.commit()
             music.id = cursor.lastrowid
             return music
@@ -51,9 +63,9 @@ class MusicRepository:
         try:
             cursor = conn.cursor()
             cursor.execute("""
-                UPDATE music SET name = ?, duration = ?
+                UPDATE music SET name = ?, id_artist = ?, id_album = ?, id_genero = ?
                 WHERE id = ?
-            """, (music_data['name'], music_data['duration'], music_id))
+            """, (music_data.get('name'), music_data.get('id_artist'), music_data.get('id_album'), music_data.get('id_genero'), music_id))
             conn.commit()
             return self.get_by_id(music_id)
         finally:

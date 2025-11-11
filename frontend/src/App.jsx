@@ -8,8 +8,8 @@ import AlbumView from "./components/Album";
 import ArtistView from "./components/Artist";
 
 const App = () => {
-  const [currentView, setCurrentView] = useState("musica"); // musica, playlist, album, artista
-  const [currentMusic, setCurrentMusic] = useState(null); // Estado para a música atual
+  const [currentView, setCurrentView] = useState("musica");
+  const [currentMusic, setCurrentMusic] = useState(null);
 
   const playMusic = async (id) => {
     try {
@@ -19,7 +19,7 @@ const App = () => {
 
       if (response.ok) {
         const music = await response.json();
-        setCurrentMusic(music); // Define o objeto da música atual
+        setCurrentMusic(music);
         console.log("Tocando música:", music);
       } else {
         const errorResult = await response.json();

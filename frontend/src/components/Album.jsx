@@ -5,10 +5,12 @@ import "./Album.css";
 const AlbumView = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [albums, setAlbums] = useState([]);
-  const [artists, setArtists] = useState([]); // Para popular o select
+  const [artists, setArtists] = useState([]);
   const [albumName, setAlbumName] = useState("");
   const [selectedArtistId, setSelectedArtistId] = useState("");
+  const [albumDate, setAlbumDate] = useState("");
   const [editingAlbum, setEditingAlbum] = useState(null);
+  const [notification, setNotification] = useState({ message: "", type: "" });
 
   const getAlbums = async () => {
     try {
@@ -33,23 +35,35 @@ const AlbumView = () => {
     getArtists(); // Carrega artistas para o formulário
   }, []);
 
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification({ message: "", type: "" });
+    }, 3000);
+  };
+
   const handleOpenAddForm = () => {
     setEditingAlbum(null);
     setAlbumName("");
     setSelectedArtistId("");
+    setAlbumDate("");
     setShowAddForm(true);
   };
 
   const handleOpenEditForm = (album) => {
     setEditingAlbum(album);
     setAlbumName(album.name);
+    setAlbumDate(album.date.split("T")[0]); // Formata a data para YYYY-MM-DD
     setSelectedArtistId(album.id_artist);
     setShowAddForm(true);
   };
 
   const handleSubmit = async () => {
     if (!albumName || !selectedArtistId) {
-      alert("Por favor, preencha o nome e selecione um artista.");
+      showNotification(
+        "Por favor, preencha o nome e selecione um artista.",
+        "error"
+      );
       return;
     }
 
@@ -62,7 +76,7 @@ const AlbumView = () => {
     const albumData = {
       name: albumName,
       id_artist: parseInt(selectedArtistId, 10),
-      date: new Date().toISOString(), // Envia a data atual no formato ISO
+      date: new Date(albumDate).toISOString(),
     };
 
     try {
@@ -73,11 +87,14 @@ const AlbumView = () => {
       });
 
       if (response.ok) {
-        alert(`Álbum ${isEditing ? "atualizado" : "salvo"} com sucesso!`);
+        showNotification(
+          `Álbum ${isEditing ? "atualizado" : "salvo"} com sucesso!`,
+          "success"
+        );
         setShowAddForm(false);
         getAlbums();
       } else {
-        alert(`Erro: ${(await response.json()).error}`);
+        showNotification(`Erro: ${(await response.json()).error}`, "error");
       }
     } catch (error) {
       console.error("Falha na requisição:", error);
@@ -91,10 +108,10 @@ const AlbumView = () => {
           method: "DELETE",
         });
         if (response.ok) {
-          alert("Álbum deletado com sucesso!");
+          showNotification("Álbum deletado com sucesso!", "success");
           getAlbums();
         } else {
-          alert(`Erro: ${(await response.json()).error}`);
+          showNotification(`Erro: ${(await response.json()).error}`, "error");
         }
       } catch (error) {
         console.error("Falha ao deletar:", error);
@@ -104,6 +121,11 @@ const AlbumView = () => {
 
   return (
     <div className="content">
+      {notification.message && (
+        <div className={`notification ${notification.type}`}>
+          {notification.message}
+        </div>
+      )}
       <div className="header">
         <h2>Álbuns</h2>
       </div>
@@ -129,6 +151,11 @@ const AlbumView = () => {
                 </option>
               ))}
             </select>
+            <input
+              type="date"
+              value={albumDate}
+              onChange={(e) => setAlbumDate(e.target.value)}
+            />
             <div className="form-buttons">
               <button onClick={() => setShowAddForm(false)}>Cancelar</button>
               <button onClick={handleSubmit}>Salvar</button>

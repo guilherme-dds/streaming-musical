@@ -1,0 +1,33 @@
+.player-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #181818;
+  border-top: 1px solid #282828;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.music-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.music-name {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.artist-name {
+  color: #b3b3b3;
+  font-size: 0.8rem;
+}
+
+.audio-player {
+  width: 60%;
+}

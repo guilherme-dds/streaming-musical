@@ -1,7 +1,7 @@
 .app-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 90px);
+  height: 100vh;
   margin: 0;
 }
 
@@ -10,12 +10,11 @@
   gap: 170px;
   padding: 40px 40px 40px 40px;
   flex-grow: 1;
-  overflow: hidden;
-  align-items: flex-start; /* Alinha a nav e o conteúdo ao topo */
+  align-items: flex-start;
 }
 
 .nav {
-  height: 500px; /* Define uma altura fixa para a nav */
+  height: 500px;
   width: 80px;
   background: #1a1e1f;
   border-radius: 40px;
@@ -54,6 +53,8 @@
   flex-grow: 1;
   overflow-y: auto;
   padding-right: 20px;
+  padding-bottom: 90px;
+  box-sizing: border-box;
 }
 
 .view-container {

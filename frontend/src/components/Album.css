@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  width: 166px; /* Largura igual ao artist-item */
-  height: 236px; /* Altura igual ao artist-item */
+  width: 166px;
+  height: 236px;
   position: relative;
   align-items: center;
   justify-content: center;
@@ -29,10 +29,8 @@
   border-color: #08a1e7;
 }
 
-/* Reutilizando o estilo do select do formulário de artista */
 .add-artist-form select {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  background-color: #2a2e2f; /* Garante fundo branco */
 }

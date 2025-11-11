@@ -1,0 +1,30 @@
+.album-icon {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-overlay {
+  position: absolute;
+  background-color: #08a1e7;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
+  width: 56px;
+  height: 56px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.album-item:hover .play-overlay {
+  opacity: 1;
+}
+
+.album-item:hover .music-icon {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}

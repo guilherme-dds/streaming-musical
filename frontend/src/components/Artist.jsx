@@ -8,6 +8,7 @@ const ArtistView = () => {
   const [artistName, setArtistName] = useState("");
   const [artistImageUrl, setArtistImageUrl] = useState("");
   const [editingArtist, setEditingArtist] = useState(null); // Estado para rastrear a edição
+  const [notification, setNotification] = useState({ message: "", type: "" });
 
   const getArtists = async () => {
     try {
@@ -21,6 +22,13 @@ const ArtistView = () => {
     } catch (error) {
       console.error("Falha na requisição para buscar artistas:", error);
     }
+  };
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification({ message: "", type: "" });
+    }, 3000); // A notificação desaparece após 3 segundos
   };
 
   const handleOpenEditForm = (artist) => {
@@ -39,7 +47,7 @@ const ArtistView = () => {
 
   const handleSubmit = async () => {
     if (!artistName) {
-      alert("Por favor, preencha o nome do artista.");
+      showNotification("Por favor, preencha o nome do artista.", "error");
       return;
     }
 
@@ -59,20 +67,27 @@ const ArtistView = () => {
       });
 
       if (response.ok) {
-        alert(`Artista ${isEditing ? "atualizado" : "salvo"} com sucesso!`);
+        showNotification(
+          `Artista ${isEditing ? "atualizado" : "salvo"} com sucesso!`,
+          "success"
+        );
         setShowAddForm(false); // Fecha o formulário
         setEditingArtist(null); // Limpa o estado de edição
         getArtists(); // Atualiza a lista de artistas
       } else {
         const errorResult = await response.json();
-        alert(
+        showNotification(
           `Erro ao ${isEditing ? "atualizar" : "salvar"} artista: ` +
-            errorResult.error
+            errorResult.error,
+          "error"
         );
       }
     } catch (error) {
       console.error("Falha na requisição para salvar artista:", error);
-      alert("Erro ao salvar artista. Verifique o console para mais detalhes.");
+      showNotification(
+        "Erro ao salvar artista. Verifique o console para mais detalhes.",
+        "error"
+      );
     }
   };
 
@@ -84,15 +99,21 @@ const ArtistView = () => {
         });
 
         if (response.ok) {
-          alert("Artista deletado com sucesso!");
+          showNotification("Artista deletado com sucesso!", "success");
           getArtists(); // Atualiza a lista
         } else {
           const errorResult = await response.json();
-          alert("Erro ao deletar artista: " + errorResult.error);
+          showNotification(
+            "Erro ao deletar artista: " + errorResult.error,
+            "error"
+          );
         }
       } catch (error) {
         console.error("Falha na requisição para deletar artista:", error);
-        alert("Erro ao deletar artista. Verifique o console.");
+        showNotification(
+          "Erro ao deletar artista. Verifique o console.",
+          "error"
+        );
       }
     }
   };
@@ -103,6 +124,11 @@ const ArtistView = () => {
 
   return (
     <div className="content">
+      {notification.message && (
+        <div className={`notification ${notification.type}`}>
+          {notification.message}
+        </div>
+      )}
       <div className="header">
         <h2>Artistas</h2>
         {/* O botão Adicionar foi movido para a lista de artistas */}

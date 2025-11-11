@@ -11,10 +11,12 @@ from Models.artist import Artist
 from Controllers.ArtistController import ArtistRepository
 from Models.album import Album
 from Controllers.AlbumController import AlbumRepository
+from Models.genero import Genero
+from Controllers.GeneroController import GeneroRepository
 
 app = Flask(__name__)
 CORS(app)
-load_dotenv()  # isso carrega o .env
+load_dotenv()
 
 # --- Configuração e Instanciação ---
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -28,6 +30,7 @@ storage_service = StorageService(supabase, BUCKET_NAME)
 music_repository = MusicRepository(DB_PATH)
 artist_repository = ArtistRepository(DB_PATH)
 album_repository = AlbumRepository(DB_PATH)
+genero_repository = GeneroRepository(DB_PATH)
 
 # --- Rotas Musica ---
 @app.route("/upload", methods=["POST"])
@@ -39,12 +42,19 @@ def upload_file():
     if file.filename == "":
         return jsonify({"error": "Nome de arquivo inválido"}), 400
 
-    name = request.form.get("name", file.filename) # Usa o nome do form ou o nome do arquivo
+    name = request.form.get("name", file.filename)
+    id_artist = request.form.get("id_artist")
+    id_album = request.form.get("id_album")
+    id_genero = request.form.get("id_genero")
 
     try:
         public_url, content_type = storage_service.upload(file)
 
-        new_music = Music(name=name, url=public_url)
+        new_music = Music(name=name, 
+                          url=public_url, 
+                          id_artist=id_artist, 
+                          id_album=id_album, 
+                          id_genero=id_genero)
         created_music = music_repository.create(new_music)
 
         return jsonify({
@@ -61,7 +71,6 @@ def upload_file():
 def add_music():
     music_data = request.get_json()
     try:
-        # Assumindo que a URL já existe se a música for adicionada por aqui
         new_music = Music(**music_data)
         created_music = music_repository.create(new_music)
         return jsonify(created_music.to_dict()), 201
@@ -84,7 +93,7 @@ def get_music_id(id):
         music = music_repository.get_by_id(id)
         if music is None:
             return jsonify({"error": "Música não encontrada"}), 404
-        return jsonify(music.to_dict())
+        return jsonify(music)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -97,7 +106,7 @@ def delete_music(id):
             return jsonify({"error": f"Música com id {id} não encontrada."}), 404
 
         # 1. Remove do storage
-        storage_service.remove(music_to_delete.url)
+        storage_service.remove(music_to_delete['url'])
 
         # 2. Remove do banco de dados
         music_repository.delete(id)
@@ -109,14 +118,22 @@ def delete_music(id):
 # Editar música
 @app.route('/music/<int:id>', methods=['PUT'])
 def edit_music(id):
-    music_data = request.get_json()
+    # Para PUT com FormData, usamos request.form
+    music_data = {
+        'name': request.form.get('name'),
+        'id_artist': request.form.get('id_artist'),
+        'id_album': request.form.get('id_album'),
+        'id_genero': request.form.get('id_genero')
+    }
+    # Remove chaves com valores None para não sobrescrever com null no banco
+    music_data = {k: v for k, v in music_data.items() if v is not None}
     try:
         # Verifica se a música existe antes de tentar atualizar
         if not music_repository.get_by_id(id):
             return jsonify({"error": "Música não encontrada"}), 404
             
         updated_music = music_repository.update(id, music_data)
-        return jsonify(updated_music.to_dict())
+        return jsonify(updated_music)
     except Exception as e:
         return jsonify({"error": f"Erro ao editar música: {str(e)}"}), 500
     
@@ -175,7 +192,6 @@ def edit_artist(id):
 def add_album():
     album_data = request.get_json()
     try:
-       # Verifica se o artista associado ao álbum existe
        artist_id = album_data.get('id_artist')
        if not artist_id or not artist_repository.get_by_id(artist_id):
            return jsonify({"error": "Artista não encontrado"}), 404
@@ -207,6 +223,67 @@ def delete_album(id):
         return jsonify({"message": f"Album com id {id} deletado."}), 200
     except Exception as e:
         return jsonify({"error": f"Erro ao deletar album: {str(e)}"}), 500
+
+# Editar album
+@app.route('/album/<int:id>', methods=['PUT'])
+def edit_album(id):
+    album_data = request.get_json()
+    try:
+        if not album_repository.get_by_id(id):
+            return jsonify({"error": "Album não encontrado"}), 404
+            
+        updated_album = album_repository.update(id, album_data)
+        return jsonify(updated_album.to_dict())
+    except Exception as e:
+        return jsonify({"error": f"Erro ao editar album: {str(e)}"}), 500
+    
+# --- Rotas Genero ---
+    
+# Adicionar genero
+@app.route('/genero', methods=['POST'])
+def add_genero():
+    genero_data = request.get_json()
+    try:
+       new_genero = Genero(**genero_data) 
+       created_genero = genero_repository.create(new_genero)
+       return jsonify(created_genero.to_dict()), 201
+    except Exception as e:
+        return jsonify({"error": f"Erro ao inserir Genero: {e}"}), 500
+
+# Consultar genero
+@app.route('/genero', methods=['GET'])
+def get_genero():
+    try:
+        genero = genero_repository.get_all()
+        return jsonify(genero)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao consultar os generos: {e}"}), 500
+    
+# Deletar genero
+@app.route('/genero/<int:id>', methods=['DELETE'])
+def delete_genero(id):
+    try:
+        genero_to_delete = genero_repository.get_by_id(id)
+        if not genero_to_delete:
+            return jsonify({"error": f"Genero com id {id} não encontrado."}), 404
+        genero_repository.delete(id)
+        
+        return jsonify({"message": f"Genero com id {id} deletado."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Erro ao deletar genero: {str(e)}"}), 500
+
+# Editar genero
+@app.route('/genero/<int:id>', methods=['PUT'])
+def edit_genero(id):
+    genero_data = request.get_json()
+    try:
+        if not genero_repository.get_by_id(id):
+            return jsonify({"error": "Genero não encontrado"}), 404
+            
+        updated_genero = genero_repository.update(id, genero_data)
+        return jsonify(updated_genero.to_dict())
+    except Exception as e:
+        return jsonify({"error": f"Erro ao editar genero: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(port=5000, host='localhost', debug=True)

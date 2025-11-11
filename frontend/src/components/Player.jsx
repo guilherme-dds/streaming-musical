@@ -1,12 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import "./Player.css";
-import { StepBack, StepForward, Play, Pause } from "lucide-react";
+import {
+  StepBack,
+  StepForward,
+  Play,
+  Pause,
+  Volume2,
+  Volume1,
+  VolumeX,
+} from "lucide-react";
 
 const Player = ({ currentMusic }) => {
   const audioRef = useRef(null);
   const progressBarRef = useRef(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(1); // 1 = 100%
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
@@ -68,6 +77,24 @@ const Player = ({ currentMusic }) => {
     setCurrentTime(newTime);
   };
 
+  const handleVolumeChange = (event) => {
+    const newVolume = parseFloat(event.target.value);
+    setVolume(newVolume);
+    audioRef.current.volume = newVolume;
+  };
+
+  const toggleMute = () => {
+    if (volume > 0) {
+      setVolume(0);
+      audioRef.current.volume = 0;
+    } else {
+      // Se estava mudo, volta para 100% ou poderia ser o volume anterior.
+      // Para simplificar, voltaremos para 100%.
+      setVolume(1);
+      audioRef.current.volume = 1;
+    }
+  };
+
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = Math.floor(timeInSeconds % 60);
@@ -76,6 +103,16 @@ const Player = ({ currentMusic }) => {
 
   const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
 
+  const VolumeIcon = () => {
+    if (volume === 0) {
+      return <VolumeX size={20} />;
+    }
+    if (volume < 0.5) {
+      return <Volume1 size={20} />;
+    }
+    return <Volume2 size={20} />;
+  };
+
   return (
     <div className="player-container">
       <audio ref={audioRef} />
@@ -83,7 +120,7 @@ const Player = ({ currentMusic }) => {
         {currentMusic ? (
           <>
             <span className="music-name">{currentMusic.name}</span>
-            <span className="music-artist">{currentMusic.artist}</span>
+            <span className="music-artist">{currentMusic.artist_name}</span>
           </>
         ) : (
           <span className="music-info-placeholder">Selecione uma música</span>
@@ -122,7 +159,21 @@ const Player = ({ currentMusic }) => {
       </div>
 
       <div className="extra-controls">
-        {/* Espaço para controles de volume, etc. */}
+        <div className="volume-container">
+          <button className="control-button" onClick={toggleMute}>
+            <VolumeIcon />
+          </button>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volume}
+            onChange={handleVolumeChange}
+            className="volume-slider"
+            style={{ backgroundSize: `${volume * 100}% 100%` }}
+          />
+        </div>
       </div>
     </div>
   );
