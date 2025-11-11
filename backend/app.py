@@ -13,6 +13,10 @@ from Models.album import Album
 from Controllers.AlbumController import AlbumRepository
 from Models.genero import Genero
 from Controllers.GeneroController import GeneroRepository
+from Models.user import User
+from Controllers.UserController import UserRepository
+from Models.playlist import Playlist
+from Controllers.PlaylistController import PlaylistRepository
 
 app = Flask(__name__)
 CORS(app)
@@ -31,6 +35,8 @@ music_repository = MusicRepository(DB_PATH)
 artist_repository = ArtistRepository(DB_PATH)
 album_repository = AlbumRepository(DB_PATH)
 genero_repository = GeneroRepository(DB_PATH)
+user_repository = UserRepository(DB_PATH)
+playlist_repository = PlaylistRepository(DB_PATH)
 
 # --- Rotas Musica ---
 @app.route("/upload", methods=["POST"])
@@ -284,6 +290,138 @@ def edit_genero(id):
         return jsonify(updated_genero.to_dict())
     except Exception as e:
         return jsonify({"error": f"Erro ao editar genero: {str(e)}"}), 500
+
+# --- Rotas User ---
+
+# Adicionar usuário
+@app.route('/user', methods=['POST'])
+def add_user():
+    user_data = request.get_json()
+    try:
+       new_user = User(**user_data) 
+       created_user = user_repository.create(new_user)
+       return jsonify(created_user.to_dict()), 201
+    except Exception as e:
+        return jsonify({"error": f"Erro ao inserir Usuário: {e}"}), 500
+
+# Consultar usuários
+@app.route('/user', methods=['GET'])
+def get_user():
+    try:
+        users = user_repository.get_all()
+        return jsonify(users)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao consultar os usuários: {e}"}), 500
+
+# Consultar usuário por id
+@app.route('/user/<int:id>', methods=['GET'])
+def get_user_id(id):
+    try:
+        user = user_repository.get_by_id(id)
+        if user is None:
+            return jsonify({"error": "Usuário não encontrado"}), 404
+        return jsonify(user)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Deletar usuário
+@app.route('/user/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    try:
+        if not user_repository.get_by_id(id):
+            return jsonify({"error": f"Usuário com id {id} não encontrado."}), 404
+        user_repository.delete(id)
+        return jsonify({"message": f"Usuário com id {id} deletado."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Erro ao deletar usuário: {str(e)}"}), 500
+
+# Editar usuário
+@app.route('/user/<int:id>', methods=['PUT'])
+def edit_user(id):
+    user_data = request.get_json()
+    try:
+        if not user_repository.get_by_id(id):
+            return jsonify({"error": "Usuário não encontrado"}), 404
+            
+        updated_user = user_repository.update(id, user_data)
+        return jsonify(updated_user.to_dict())
+    except Exception as e:
+        return jsonify({"error": f"Erro ao editar usuário: {str(e)}"}), 500
+
+# --- Rotas Playlist ---
+
+# Adicionar playlist
+@app.route('/playlist', methods=['POST'])
+def add_playlist():
+    data = request.get_json()
+    if not data or 'name' not in data or 'id_user' not in data:
+        return jsonify({"error": "Dados incompletos"}), 400
+    try:
+        if not user_repository.get_by_id(data['id_user']):
+            return jsonify({"error": "Usuário não encontrado"}), 404
+        
+        new_playlist = Playlist(name=data['name'], id_user=data['id_user'])
+        created_playlist = playlist_repository.create(new_playlist)
+        return jsonify(created_playlist.to_dict()), 201
+    except Exception as e:
+        return jsonify({"error": f"Erro ao criar playlist: {e}"}), 500
+
+# Consultar todas as playlists
+@app.route('/playlist', methods=['GET'])
+def get_playlists():
+    try:
+        playlists = playlist_repository.get_all()
+        return jsonify(playlists)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao buscar playlists: {e}"}), 500
+
+# Consultar playlist por id (com músicas)
+@app.route('/playlist/<int:id>', methods=['GET'])
+def get_playlist_by_id(id):
+    try:
+        playlist = playlist_repository.get_by_id(id)
+        if playlist is None:
+            return jsonify({"error": "Playlist não encontrada"}), 404
+        return jsonify(playlist)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao buscar playlist: {e}"}), 500
+
+# Deletar playlist
+@app.route('/playlist/<int:id>', methods=['DELETE'])
+def delete_playlist(id):
+    try:
+        deleted = playlist_repository.delete(id)
+        if not deleted:
+            return jsonify({"error": "Playlist não encontrada"}), 404
+        return jsonify({"message": "Playlist deletada com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"error": f"Erro ao deletar playlist: {e}"}), 500
+
+# Adicionar música a uma playlist
+@app.route('/playlist/<int:id_playlist>/music', methods=['POST'])
+def add_music_to_playlist(id_playlist):
+    data = request.get_json()
+    if 'id_music' not in data:
+        return jsonify({"error": "ID da música é obrigatório"}), 400
+    
+    id_music = data['id_music']
+    try:
+        playlist_repository.add_music(id_playlist, id_music)
+        return jsonify({"message": "Música adicionada à playlist com sucesso"}), 201
+    except Exception as e:
+        # Trata violação de chave estrangeira ou outros erros de DB
+        return jsonify({"error": f"Erro ao adicionar música: {e}"}), 500
+
+# Remover música de uma playlist
+@app.route('/playlist/<int:id_playlist>/music/<int:id_music>', methods=['DELETE'])
+def remove_music_from_playlist(id_playlist, id_music):
+    try:
+        removed = playlist_repository.remove_music(id_playlist, id_music)
+        if not removed:
+            return jsonify({"error": "Música não encontrada na playlist"}), 404
+        return jsonify({"message": "Música removida da playlist com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"error": f"Erro ao remover música: {e}"}), 500
 
 if __name__ == '__main__':
     app.run(port=5000, host='localhost', debug=True)
