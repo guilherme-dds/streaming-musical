@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { FilePen, Trash2 } from "lucide-react";
-import "./Artist.css";
 
 const ArtistView = () => {
   const [showAddForm, setShowAddForm] = useState(false);

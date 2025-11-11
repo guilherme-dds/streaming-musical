@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { FilePen, Trash2, DiscAlbum } from "lucide-react";
-import "./Album.css";
 
 const AlbumView = () => {
   const [showAddForm, setShowAddForm] = useState(false);

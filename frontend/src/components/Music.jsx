@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { FilePen, Trash2, Play, Music } from "lucide-react";
-import "./Music.css";
 
 const MusicView = ({ playMusic }) => {
   const [showAddForm, setShowAddForm] = useState(false);

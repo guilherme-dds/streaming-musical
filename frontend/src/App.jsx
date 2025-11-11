@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import Player from "./components/Player";
+import Player from "./components/Player"; // Player.css is now in Components.css
 import { Music, ListMusic, DiscAlbum, User } from "lucide-react";
 import "./App.css";
 import MusicView from "./components/Music";
 import PlaylistView from "./components/Playlist";
 import AlbumView from "./components/Album";
 import ArtistView from "./components/Artist";
+import "./components/Components.css";
 
 const App = () => {
   const [currentView, setCurrentView] = useState("musica");
