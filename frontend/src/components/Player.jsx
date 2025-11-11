@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import "./Player.css";
 import {
   StepBack,
   StepForward,
@@ -136,7 +135,7 @@ const Player = ({ currentMusic }) => {
             className="control-button play-button"
             onClick={togglePlayPause}
           >
-            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+            {isPlaying ? <Pause size={18} /> : <Play size={18} color="white" />}
           </button>
           <button className="control-button">
             <StepForward size={22} />

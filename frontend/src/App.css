@@ -46,6 +46,11 @@
   background-color: #2a2e2f;
 }
 
+.navContent button.active,
+.navContent button.active:hover {
+  color: #08a1e7;
+}
+
 .main-content {
   display: flex;
   flex-direction: column;

@@ -180,68 +180,73 @@ const MusicView = ({ playMusic }) => {
 
       {showAddForm && (
         <div className="form-overlay">
-          <div className="add-artist-form">
+          <div className="add-artist-form form-popup">
             <h2>{editingMusic ? "Editar Música" : "Adicionar Música"}</h2>
-            <input
-              type="text"
-              placeholder="Nome da Música"
-              value={musicName}
-              onChange={(e) => setMusicName(e.target.value)}
-            />
-            <select
-              value={selectedArtistId}
-              onChange={(e) => setSelectedArtistId(e.target.value)}
-            >
-              <option value="">Selecione um Artista</option>
-              {artists.map((artist) => (
-                <option key={artist.id} value={artist.id}>
-                  {artist.name}
-                </option>
-              ))}
-            </select>
-            <select
-              value={selectedAlbumId}
-              onChange={(e) => setSelectedAlbumId(e.target.value)}
-            >
-              <option value="">Selecione um Álbum</option>
-              {albums.map((album) => (
-                <option key={album.id} value={album.id}>
-                  {album.name}
-                </option>
-              ))}
-            </select>
-            <select
-              value={selectedGeneroId}
-              onChange={(e) => setSelectedGeneroId(e.target.value)}
-            >
-              <option value="">Selecione um gênero</option>
-              {generos.map((genero) => (
-                <option key={genero.id} value={genero.id}>
-                  {genero.name}
-                </option>
-              ))}
-              <option value="create-new">Criar novo gênero...</option>
-            </select>
-            {selectedGeneroId === "create-new" && (
+            <div className="form-content">
               <input
                 type="text"
-                placeholder="Nome do novo gênero"
-                value={newGenreName}
-                onChange={(e) => setNewGenreName(e.target.value)}
-                style={{ marginTop: "10px" }}
+                placeholder="Nome da Música"
+                value={musicName}
+                onChange={(e) => setMusicName(e.target.value)}
               />
-            )}
-            {!editingMusic && (
-              <input
-                id="file-input"
-                type="file"
-                onChange={(e) => setFile(e.target.files[0])}
-                accept="audio/*"
-              />
-            )}
+              <select
+                value={selectedArtistId}
+                onChange={(e) => setSelectedArtistId(e.target.value)}
+              >
+                <option value="">Selecione um Artista</option>
+                {artists.map((artist) => (
+                  <option key={artist.id} value={artist.id}>
+                    {artist.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={selectedAlbumId}
+                onChange={(e) => setSelectedAlbumId(e.target.value)}
+              >
+                <option value="">Selecione um Álbum</option>
+                {albums.map((album) => (
+                  <option key={album.id} value={album.id}>
+                    {album.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={selectedGeneroId}
+                onChange={(e) => setSelectedGeneroId(e.target.value)}
+              >
+                <option value="">Selecione um gênero</option>
+                {generos.map((genero) => (
+                  <option key={genero.id} value={genero.id}>
+                    {genero.name}
+                  </option>
+                ))}
+                <option value="create-new">Criar novo gênero...</option>
+              </select>
+              {selectedGeneroId === "create-new" && (
+                <input
+                  type="text"
+                  placeholder="Nome do novo gênero"
+                  value={newGenreName}
+                  onChange={(e) => setNewGenreName(e.target.value)}
+                />
+              )}
+              {!editingMusic && (
+                <input
+                  id="file-input"
+                  type="file"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  accept="audio/*"
+                />
+              )}
+            </div>
             <div className="form-buttons">
               <button onClick={() => setShowAddForm(false)}>Cancelar</button>
-              <button onClick={handleSubmit} disabled={uploading}>
+              <button
+                onClick={handleSubmit}
+                disabled={uploading}
+                className="primary"
+              >
                 {uploading ? "Salvando..." : "Salvar"}
               </button>
             </div>

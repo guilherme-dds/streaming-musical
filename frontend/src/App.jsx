@@ -3,7 +3,7 @@ import Player from "./components/Player"; // Player.css is now in Components.css
 import { Music, ListMusic, DiscAlbum, User } from "lucide-react";
 import "./App.css";
 import MusicView from "./components/Music";
-import PlaylistView from "./components/Playlist";
+import Playlist from "./components/Playlist";
 import AlbumView from "./components/Album";
 import ArtistView from "./components/Artist";
 import "./components/Components.css";
@@ -37,23 +37,35 @@ const App = () => {
         <div className="main-view">
           <div className="nav">
             <div className="navContent">
-              <button onClick={() => setCurrentView("musica")}>
+              <button
+                className={currentView === "musica" ? "active" : ""}
+                onClick={() => setCurrentView("musica")}
+              >
                 <Music />
               </button>
-              <button onClick={() => setCurrentView("playlist")}>
+              <button
+                className={currentView === "playlist" ? "active" : ""}
+                onClick={() => setCurrentView("playlist")}
+              >
                 <ListMusic />
               </button>
-              <button onClick={() => setCurrentView("album")}>
+              <button
+                className={currentView === "album" ? "active" : ""}
+                onClick={() => setCurrentView("album")}
+              >
                 <DiscAlbum />
               </button>
-              <button onClick={() => setCurrentView("artista")}>
+              <button
+                className={currentView === "artista" ? "active" : ""}
+                onClick={() => setCurrentView("artista")}
+              >
                 <User />
               </button>
             </div>
           </div>
           <div className="main-content">
             {currentView === "musica" && <MusicView playMusic={playMusic} />}
-            {currentView === "playlist" && <PlaylistView />}
+            {currentView === "playlist" && <Playlist />}
             {currentView === "album" && <AlbumView />}
             {currentView === "artista" && <ArtistView />}
           </div>

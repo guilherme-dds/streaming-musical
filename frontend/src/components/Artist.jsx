@@ -136,23 +136,27 @@ const ArtistView = () => {
       {/* O pop-up do formulário é renderizado condicionalmente sobre a lista */}
       {showAddForm && (
         <div className="form-overlay">
-          <div className="add-artist-form">
+          <div className="add-artist-form form-popup">
             <h2>{editingArtist ? "Editar Artista" : "Adicionar Artista"}</h2>
-            <input
-              type="text"
-              placeholder="Nome"
-              value={artistName}
-              onChange={(e) => setArtistName(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="URL da imagem"
-              value={artistImageUrl}
-              onChange={(e) => setArtistImageUrl(e.target.value)}
-            />
+            <div className="form-content">
+              <input
+                type="text"
+                placeholder="Nome"
+                value={artistName}
+                onChange={(e) => setArtistName(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="URL da imagem"
+                value={artistImageUrl}
+                onChange={(e) => setArtistImageUrl(e.target.value)}
+              />
+            </div>
             <div className="form-buttons">
               <button onClick={() => setShowAddForm(false)}>Cancelar</button>
-              <button onClick={handleSubmit}>Salvar</button>
+              <button onClick={handleSubmit} className="primary">
+                Salvar
+              </button>
             </div>
           </div>
         </div>

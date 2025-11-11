@@ -131,33 +131,37 @@ const AlbumView = () => {
 
       {showAddForm && (
         <div className="form-overlay">
-          <div className="add-artist-form">
+          <div className="add-artist-form form-popup">
             <h2>{editingAlbum ? "Editar Álbum" : "Adicionar Álbum"}</h2>
-            <input
-              type="text"
-              placeholder="Nome do Álbum"
-              value={albumName}
-              onChange={(e) => setAlbumName(e.target.value)}
-            />
-            <select
-              value={selectedArtistId}
-              onChange={(e) => setSelectedArtistId(e.target.value)}
-            >
-              <option value="">Selecione um Artista</option>
-              {artists.map((artist) => (
-                <option key={artist.id} value={artist.id}>
-                  {artist.name}
-                </option>
-              ))}
-            </select>
-            <input
-              type="date"
-              value={albumDate}
-              onChange={(e) => setAlbumDate(e.target.value)}
-            />
+            <div className="form-content">
+              <input
+                type="text"
+                placeholder="Nome do Álbum"
+                value={albumName}
+                onChange={(e) => setAlbumName(e.target.value)}
+              />
+              <select
+                value={selectedArtistId}
+                onChange={(e) => setSelectedArtistId(e.target.value)}
+              >
+                <option value="">Selecione um Artista</option>
+                {artists.map((artist) => (
+                  <option key={artist.id} value={artist.id}>
+                    {artist.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="date"
+                value={albumDate}
+                onChange={(e) => setAlbumDate(e.target.value)}
+              />
+            </div>
             <div className="form-buttons">
               <button onClick={() => setShowAddForm(false)}>Cancelar</button>
-              <button onClick={handleSubmit}>Salvar</button>
+              <button onClick={handleSubmit} className="primary">
+                Salvar
+              </button>
             </div>
           </div>
         </div>
