@@ -525,3 +525,62 @@ input[type="range"]:hover::-webkit-slider-thumb {
 .form-popup .form-buttons {
   justify-content: flex-end;
 }
+
+/* Estilos para o CustomSelect */
+.custom-select {
+  position: relative;
+  width: 200px;
+  font-size: 14px;
+}
+
+.select-selected {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2a2e2f;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 20px;
+  padding: 0 15px;
+  height: 38px;
+  cursor: pointer;
+  user-select: none; /* Impede a seleção de texto */
+  transition: border-color 0.2s ease;
+}
+
+.select-selected:hover {
+  border-color: #08a1e7;
+}
+
+.select-selected .arrow {
+  transition: transform 0.2s ease;
+}
+
+.select-selected .arrow.open {
+  transform: rotate(180deg);
+}
+
+.select-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #2a2e2f;
+  border: 1px solid #444;
+  border-radius: 8px;
+  margin-top: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.select-option {
+  padding: 10px 15px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.2s ease;
+}
+
+.select-option:hover {
+  background-color: #08a1e7;
+}

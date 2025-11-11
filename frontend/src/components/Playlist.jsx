@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ListMusic } from "lucide-react";
 import UserManagement from "./UserManagement";
+import CustomSelect from "./CustomSelect";
 
 const Playlist = () => {
   const [playlists, setPlaylists] = useState([]);
@@ -56,16 +57,15 @@ const Playlist = () => {
       <div className="header">
         <h2>Playlists</h2>
         <div className="playlist-controls">
-          <select
+          <CustomSelect
+            options={users.map((user) => ({
+              value: user.id,
+              label: user.name,
+            }))}
             value={selectedUserId}
-            onChange={(e) => setSelectedUserId(e.target.value)}
-          >
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => setSelectedUserId(value)}
+            placeholder="Selecione um usuário"
+          />
           <button onClick={() => setShowUserManagement(true)}>
             Gerenciar Usuários
           </button>
