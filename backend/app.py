@@ -409,7 +409,6 @@ def add_music_to_playlist(id_playlist):
         playlist_repository.add_music(id_playlist, id_music)
         return jsonify({"message": "Música adicionada à playlist com sucesso"}), 201
     except Exception as e:
-        # Trata violação de chave estrangeira ou outros erros de DB
         return jsonify({"error": f"Erro ao adicionar música: {e}"}), 500
 
 # Remover música de uma playlist
