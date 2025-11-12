@@ -135,7 +135,11 @@ const Player = ({ currentMusic }) => {
             className="control-button play-button"
             onClick={togglePlayPause}
           >
-            {isPlaying ? <Pause size={18} /> : <Play size={18} color="white" />}
+            {isPlaying ? (
+              <Pause size={18} color="white" />
+            ) : (
+              <Play size={18} color="white" />
+            )}
           </button>
           <button className="control-button">
             <StepForward size={22} />

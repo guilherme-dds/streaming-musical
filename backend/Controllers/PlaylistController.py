@@ -87,3 +87,17 @@ class PlaylistRepository:
             )
             conn.commit()
             return cursor.rowcount > 0
+
+    def get_available_musics(self, id_playlist):
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT m.*, a.name as artist_name
+                FROM music m
+                LEFT JOIN artist a ON m.id_artist = a.id
+                WHERE m.id NOT IN (
+                    SELECT id_music FROM playlist_music WHERE id_playlist = ?
+                )
+            """, (id_playlist,))
+            rows = cursor.fetchall()
+            return [dict(row) for row in rows]

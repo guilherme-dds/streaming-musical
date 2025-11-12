@@ -1,10 +1,9 @@
-/* Estilos de Artist.css */
 .header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  align-items: center; /* Garante que o título e os botões estejam alinhados verticalmente */
+  align-items: center;
 }
 
 .content {
@@ -22,7 +21,12 @@
 }
 
 .name {
+  font-weight: 700;
   text-align: center;
+}
+
+.artist-name {
+  color: #b3b3b3;
 }
 
 .artist-item {
@@ -178,25 +182,25 @@
 .album-item {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  width: 166px;
-  height: 236px;
+  gap: 10px;
+  width: 100px;
   position: relative;
   align-items: center;
-  justify-content: center;
   border: 3px solid #fff;
   border-radius: 20px;
-  padding: 30px;
-  box-sizing: border-box;
+  padding: 30px 30px 70px;
+  box-sizing: content-box;
   text-align: center;
 }
 
 .album-icon {
   color: #fff;
+  min-height: 100px;
 }
 
 .add-album-item {
   cursor: pointer;
+  justify-content: center;
   border-style: dashed;
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
@@ -275,6 +279,14 @@
   padding: 0 20px;
   border-radius: 20px;
   cursor: pointer;
+}
+
+.playlist-controls button.danger {
+  background-color: #dc3545;
+}
+
+.playlist-controls button.danger:hover {
+  background-color: #c82333;
 }
 
 .user-add-form {
@@ -583,4 +595,120 @@ input[type="range"]:hover::-webkit-slider-thumb {
 
 .select-option:hover {
   background-color: #08a1e7;
+}
+
+/* Estilos para Playlist Detail View */
+.back-button {
+  background: #2a2e2f;
+  border: 1px solid #444;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 20px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #3a3f41;
+  color: #fff;
+  border-color: #08a1e7;
+  text-decoration: none;
+}
+
+.playlist-detail-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.playlist-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #444;
+  padding-bottom: 15px;
+}
+
+.playlist-detail-header h3 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.playlist-detail-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.playlist-detail-actions button {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.playlist-detail-actions button.primary {
+  background-color: #08a1e7;
+  color: white;
+}
+
+.playlist-detail-actions button.danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.music-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.music-list-item-large {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #2a2e2f;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.music-list-item-large:hover {
+  background-color: #3a3f41;
+}
+
+.music-name-playable {
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.music-name-playable:hover {
+  color: #08a1e7;
+}
+
+.add-music-to-playlist-popup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 15px;
+  max-width: 500px;
+  background-color: #1d2123;
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid #282828;
+}
+
+.music-list-popup {
+  max-height: 400px;
+  overflow-y: auto;
+  width: 100%;
 }

@@ -422,5 +422,14 @@ def remove_music_from_playlist(id_playlist, id_music):
     except Exception as e:
         return jsonify({"error": f"Erro ao remover música: {e}"}), 500
 
+# Consultar músicas disponíveis para uma playlist
+@app.route('/playlist/<int:id_playlist>/available-musics', methods=['GET'])
+def get_available_musics_for_playlist(id_playlist):
+    try:
+        available_musics = playlist_repository.get_available_musics(id_playlist)
+        return jsonify(available_musics)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao buscar músicas disponíveis: {e}"}), 500
+
 if __name__ == '__main__':
     app.run(port=5000, host='localhost', debug=True)

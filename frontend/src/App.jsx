@@ -65,7 +65,7 @@ const App = () => {
           </div>
           <div className="main-content">
             {currentView === "musica" && <MusicView playMusic={playMusic} />}
-            {currentView === "playlist" && <Playlist />}
+            {currentView === "playlist" && <Playlist playMusic={playMusic} />}
             {currentView === "album" && <AlbumView />}
             {currentView === "artista" && <ArtistView />}
           </div>

@@ -266,6 +266,7 @@ const MusicView = ({ playMusic }) => {
               </div>
             </div>
             <span className="name">{music.name}</span>
+            <span className="artist-name">{music.artist_name}</span>
             <div className="artist-item-actions">
               <button
                 className="action-button"
