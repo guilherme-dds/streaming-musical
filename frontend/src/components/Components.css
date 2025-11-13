@@ -145,10 +145,13 @@
   color: #ccc;
   border-radius: 100%;
   font-size: 12px;
-  height: 40px;
-  width: 40px;
+  height: 35px;
+  width: 35px;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .action-button:hover {
@@ -246,6 +249,12 @@
 .album-item:hover .music-icon {
   opacity: 0;
   transition: opacity 0.2s ease;
+}
+
+/* Estilo específico para card de música */
+.music-card-item {
+  width: 120px;
+  padding: 20px 20px 60px;
 }
 
 /* Estilos para PlaylistView e UserManagement */
@@ -686,6 +695,13 @@ input[type="range"]:hover::-webkit-slider-thumb {
   background-color: #3a3f41;
 }
 
+.music-list-item {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+}
+
 .music-name-playable {
   cursor: pointer;
   flex-grow: 1;
@@ -711,4 +727,25 @@ input[type="range"]:hover::-webkit-slider-thumb {
   max-height: 400px;
   overflow-y: auto;
   width: 100%;
+}
+
+/* Estilos para o seletor de arquivo customizado */
+.file-input-label {
+  display: block;
+  background-color: #2a2e2f;
+  border: 1px solid #444;
+  color: #ccc; /* Cor mais suave para o placeholder */
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-input-label:hover {
+  background-color: #3a3f41;
+  border-color: #08a1e7;
 }

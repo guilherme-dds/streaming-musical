@@ -31,7 +31,7 @@ const AlbumView = () => {
 
   useEffect(() => {
     getAlbums();
-    getArtists(); // Carrega artistas para o formulário
+    getArtists();
   }, []);
 
   const showNotification = (message, type) => {
@@ -52,7 +52,7 @@ const AlbumView = () => {
   const handleOpenEditForm = (album) => {
     setEditingAlbum(album);
     setAlbumName(album.name);
-    setAlbumDate(album.date.split("T")[0]); // Formata a data para YYYY-MM-DD
+    setAlbumDate(album.date.split("T")[0]);
     setSelectedArtistId(album.id_artist);
     setShowAddForm(true);
   };

@@ -1,5 +1,5 @@
 class Album:
-    def __init__(self, name, id, id_artist, date=None):
+    def __init__(self, name, id_artist, date=None, id=None):
         self.id = id
         self.id_artist = id_artist
         self.name = name

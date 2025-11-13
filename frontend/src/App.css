@@ -7,20 +7,21 @@
 
 .main-view {
   display: flex;
-  gap: 170px;
-  padding: 40px 40px 40px 40px;
+  padding: 40px;
   flex-grow: 1;
   align-items: flex-start;
 }
 
 .nav {
+  position: fixed;
+  top: 40px;
+  left: 40px;
   height: 500px;
   width: 80px;
   background: #1a1e1f;
   border-radius: 40px;
   flex-shrink: 0;
 }
-
 .navContent {
   display: flex;
   flex-direction: column;
@@ -56,6 +57,7 @@
   flex-direction: column;
   gap: 40px;
   flex-grow: 1;
+  margin-left: 250px; /* Espaço para a nav (80px) + gap (170px) */
   overflow-y: auto;
   padding-right: 20px;
   padding-bottom: 90px;

@@ -232,12 +232,16 @@ const MusicView = ({ playMusic }) => {
                 />
               )}
               {!editingMusic && (
-                <input
-                  id="file-input"
-                  type="file"
-                  onChange={(e) => setFile(e.target.files[0])}
-                  accept="audio/*"
-                />
+                <label htmlFor="file-input" className="file-input-label">
+                  {file ? file.name : "Selecionar arquivo de áudio"}
+                  <input
+                    id="file-input"
+                    type="file"
+                    onChange={(e) => setFile(e.target.files[0])}
+                    accept="audio/*"
+                    style={{ display: "none" }}
+                  />
+                </label>
               )}
             </div>
             <div className="form-buttons">
@@ -256,7 +260,7 @@ const MusicView = ({ playMusic }) => {
 
       <div className="artist-list">
         {musics.map((music) => (
-          <div className="album-item" key={music.id}>
+          <div className="album-item music-card-item" key={music.id}>
             <div className="album-icon" onClick={() => playMusic(music.id)}>
               <div className="music-icon">
                 <Music size={48} />
@@ -285,7 +289,7 @@ const MusicView = ({ playMusic }) => {
         ))}
         {!showAddForm && (
           <div
-            className="album-item add-album-item"
+            className="album-item add-album-item music-card-item"
             onClick={handleOpenAddForm}
           >
             <div className="plus-icon">+</div>
