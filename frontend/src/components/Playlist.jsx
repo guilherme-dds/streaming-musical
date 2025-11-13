@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ListMusic, Trash2, Plus, X, ArrowLeft } from "lucide-react";
+import { ListMusic, Trash2, Plus, X, ArrowLeft, FilePen } from "lucide-react";
 import UserManagement from "./UserManagement";
 import CustomSelect from "./CustomSelect";
 
@@ -16,6 +16,8 @@ const Playlist = ({ playMusic }) => {
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [availableMusics, setAvailableMusics] = useState([]);
   const [showAddMusicModal, setShowAddMusicModal] = useState(false);
+  const [isEditingPlaylistName, setIsEditingPlaylistName] = useState(false);
+  const [editedPlaylistName, setEditedPlaylistName] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -204,6 +206,54 @@ const Playlist = ({ playMusic }) => {
     }
   };
 
+  const handleStartEditPlaylistName = () => {
+    setEditedPlaylistName(selectedPlaylist.name);
+    setIsEditingPlaylistName(true);
+  };
+
+  const handleCancelEditPlaylistName = () => {
+    setIsEditingPlaylistName(false);
+    setEditedPlaylistName("");
+  };
+
+  const handleSavePlaylistName = async () => {
+    if (!editedPlaylistName.trim()) {
+      showNotification("O nome da playlist não pode ser vazio.", "error");
+      return;
+    }
+    if (editedPlaylistName === selectedPlaylist.name) {
+      setIsEditingPlaylistName(false); // Sem alterações, apenas sai do modo de edição
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/playlist/${selectedPlaylist.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: editedPlaylistName }),
+        }
+      );
+
+      if (response.ok) {
+        showNotification("Nome da playlist atualizado com sucesso!", "success");
+        setIsEditingPlaylistName(false);
+        handlePlaylistClick({ id: selectedPlaylist.id }); // Recarrega os detalhes
+      } else {
+        const errorData = await response.json().catch(() => null);
+        const errorMessage =
+          errorData?.error || "Erro ao atualizar o nome da playlist.";
+        showNotification(errorMessage, "error");
+      }
+    } catch (error) {
+      showNotification(
+        "Falha na requisição para atualizar a playlist.",
+        "error"
+      );
+    }
+  };
+
   return (
     <div className="content">
       {notification.message && (
@@ -304,11 +354,40 @@ const Playlist = ({ playMusic }) => {
       {selectedPlaylist ? (
         <div className="playlist-detail-view">
           <div className="playlist-detail-header">
-            <h3>{selectedPlaylist.name}</h3>
+            {isEditingPlaylistName ? (
+              <input
+                type="text"
+                value={editedPlaylistName}
+                onChange={(e) => setEditedPlaylistName(e.target.value)}
+                className="playlist-name-input"
+                autoFocus
+              />
+            ) : (
+              <h3>{selectedPlaylist.name}</h3>
+            )}
             <div className="playlist-detail-actions">
-              <button onClick={handleOpenAddMusic} className="primary">
-                Adicionar Músicas
-              </button>
+              {isEditingPlaylistName ? (
+                <>
+                  <button onClick={handleSavePlaylistName} className="primary">
+                    Salvar
+                  </button>
+                  <button onClick={handleCancelEditPlaylistName}>
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button onClick={handleOpenAddMusic} className="primary">
+                    Adicionar Músicas
+                  </button>
+                  <button
+                    className="edit-button"
+                    onClick={handleStartEditPlaylistName}
+                  >
+                    <FilePen size={16} /> Editar Nome
+                  </button>
+                </>
+              )}
               <button
                 className="danger"
                 onClick={() => handleDeletePlaylist(selectedPlaylist.id)}

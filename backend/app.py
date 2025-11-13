@@ -431,5 +431,21 @@ def get_available_musics_for_playlist(id_playlist):
     except Exception as e:
         return jsonify({"error": f"Erro ao buscar músicas disponíveis: {e}"}), 500
 
+# Rota para atualizar uma playlist (ex: renomear)
+@app.route('/playlist/<int:playlist_id>', methods=['PUT'])
+def update_playlist(playlist_id):
+    data = request.get_json()
+    if not data or 'name' not in data or not data['name'].strip():
+        return jsonify({'error': 'O nome da playlist é obrigatório'}), 400
+    try:
+        if not playlist_repository.get_by_id(playlist_id):
+            return jsonify({"error": "Playlist não encontrada"}), 404
+        updated_playlist = playlist_repository.update(playlist_id, data)
+        return jsonify(updated_playlist)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao editar playlist: {str(e)}"}), 500
+
+
+
 if __name__ == '__main__':
     app.run(port=5000, host='localhost', debug=True)

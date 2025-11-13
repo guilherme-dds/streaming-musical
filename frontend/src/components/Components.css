@@ -676,10 +676,28 @@ input[type="range"]:hover::-webkit-slider-thumb {
   color: white;
 }
 
+.playlist-detail-actions button.edit-button {
+  background-color: #444;
+  color: white;
+}
+
+.playlist-name-input {
+  font-size: 24px;
+  font-weight: bold;
+  background-color: #2a2e2f;
+  color: white;
+  border: 1px solid #08a1e7;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 0;
+  flex-grow: 1;
+  margin-right: 20px;
+}
+
 .music-list-container {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 17px;
 }
 
 .music-list-item-large {
@@ -698,9 +716,11 @@ input[type="range"]:hover::-webkit-slider-thumb {
 
 .music-list-item {
   display: flex;
-  flex-direction: row;
-  gap: 20px;
+  justify-content: space-between;
   align-items: center;
+  padding: 12px 10px;
+  border-bottom: 1px solid #333;
+  transition: background-color 0.2s ease;
 }
 
 .music-name-playable {
@@ -725,7 +745,7 @@ input[type="range"]:hover::-webkit-slider-thumb {
 }
 
 .music-list-popup {
-  max-height: 400px;
+  max-height: 220px;
   overflow-y: auto;
   width: 100%;
 }
