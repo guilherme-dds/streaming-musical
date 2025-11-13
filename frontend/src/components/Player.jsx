@@ -31,7 +31,7 @@ const Player = ({ currentMusic }) => {
         audioRef.current.src = "";
       }
     }
-  }, [currentMusic]); // Re-executa quando a música atual muda
+  }, [currentMusic]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -87,8 +87,6 @@ const Player = ({ currentMusic }) => {
       setVolume(0);
       audioRef.current.volume = 0;
     } else {
-      // Se estava mudo, volta para 100% ou poderia ser o volume anterior.
-      // Para simplificar, voltaremos para 100%.
       setVolume(1);
       audioRef.current.volume = 1;
     }

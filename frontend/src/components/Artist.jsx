@@ -130,10 +130,8 @@ const ArtistView = () => {
       )}
       <div className="header">
         <h2>Artistas</h2>
-        {/* O botão Adicionar foi movido para a lista de artistas */}
       </div>
 
-      {/* O pop-up do formulário é renderizado condicionalmente sobre a lista */}
       {showAddForm && (
         <div className="form-overlay">
           <div className="add-artist-form form-popup">
@@ -162,7 +160,6 @@ const ArtistView = () => {
         </div>
       )}
 
-      {/* A lista de artistas é sempre renderizada */}
       <div className="artist-list">
         {artists.map((artist) => (
           <div className="artist-item" key={artist.id}>
@@ -188,7 +185,6 @@ const ArtistView = () => {
           </div>
         ))}
 
-        {/* Botão Adicionar como um item da lista */}
         {!showAddForm && (
           <div
             className="artist-item add-artist-item"

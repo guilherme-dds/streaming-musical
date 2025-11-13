@@ -6,9 +6,8 @@ const MusicView = ({ playMusic }) => {
   const [musics, setMusics] = useState([]);
   const [artists, setArtists] = useState([]);
   const [albums, setAlbums] = useState([]);
-  const [generos, setGeneros] = useState([]); // Assumindo que você terá uma rota para gêneros
+  const [generos, setGeneros] = useState([]);
 
-  // State for form fields
   const [musicName, setMusicName] = useState("");
   const [selectedArtistId, setSelectedArtistId] = useState("");
   const [selectedAlbumId, setSelectedAlbumId] = useState("");

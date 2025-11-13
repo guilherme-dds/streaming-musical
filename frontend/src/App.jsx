@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Player from "./components/Player"; // Player.css is now in Components.css
+import Player from "./components/Player";
 import { Music, ListMusic, DiscAlbum, User } from "lucide-react";
 import "./App.css";
 import MusicView from "./components/Music";

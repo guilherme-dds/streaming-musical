@@ -12,7 +12,6 @@ const CustomSelect = ({ options, value, onChange, placeholder }) => {
     setIsOpen(false);
   };
 
-  // Fecha o select se clicar fora dele
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (selectRef.current && !selectRef.current.contains(event.target)) {

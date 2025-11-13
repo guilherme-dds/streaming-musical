@@ -49,8 +49,8 @@ const UserManagement = ({ onClose, onUsersUpdate }) => {
         showNotification("Usuário criado com sucesso!", "success");
         setNewUserName("");
         setNewUserEmail("");
-        await getUsers(); // Atualiza a lista interna
-        onUsersUpdate(); // Notifica o componente pai para atualizar
+        await getUsers();
+        onUsersUpdate();
       } else {
         const error = await response.json();
         showNotification(`Erro: ${error.error}`, "error");
@@ -106,7 +106,6 @@ const UserManagement = ({ onClose, onUsersUpdate }) => {
             </div>
           )}
 
-          {/* Formulário de Adição e Lista de Usuários */}
           <div className="user-add-form">
             <div className="form-content">
               <input

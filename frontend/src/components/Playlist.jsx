@@ -119,7 +119,7 @@ const Playlist = ({ playMusic }) => {
         if (response.ok) {
           showNotification("Playlist deletada com sucesso!", "success");
           fetchPlaylists(selectedUserId);
-          setSelectedPlaylist(null); // Fecha a visualização de detalhes
+          setSelectedPlaylist(null);
         } else {
           const error = await response.json();
           showNotification(`Erro: ${error.error}`, "error");
@@ -194,7 +194,7 @@ const Playlist = ({ playMusic }) => {
       );
       if (response.ok) {
         showNotification("Música removida com sucesso!", "success");
-        handlePlaylistClick(selectedPlaylist); // Recarrega os detalhes da playlist
+        handlePlaylistClick(selectedPlaylist);
       } else {
         const error = await response.json();
         showNotification(`Erro: ${error.error}`, "error");
